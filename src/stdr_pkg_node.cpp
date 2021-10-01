@@ -84,7 +84,7 @@ int main(int argc, char **argv)
     if(laserInput.ranges[134]<0.5){
         ROS_WARN("About to run into a wall, backing up");
 	cmd.linear.x = -0.5;
-        cmd.angular.z = 0;
+        cmd.angular.z = 0.5;
     }
     /**
      * This is a message object. You stuff it with data, and then publish it.
