@@ -1,4 +1,7 @@
 <launch>
-	<include file="$(find stdr_pkg)/launch/node_launch.launch"/>
+	<arg name = "namespace" default = "robot0"/>
+	<include file="$(find stdr_pkg)/launch/node_launch.launch">
+		<arg name = "namespaceSmall" value = "$(arg namespace)" />
+	</include>
 	<include file="$(find stdr_launchers)/launch/server_with_map_and_gui.launch"/>
 </launch>
