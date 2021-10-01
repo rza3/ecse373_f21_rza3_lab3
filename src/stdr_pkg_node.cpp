@@ -78,13 +78,24 @@ int main(int argc, char **argv)
 	loop_rate.sleep();
   }
   int count = 0;
+  bool nearedWall = 0;
   while (ros::ok())
   {
     cmd = des;
+    if(nearedWall){
+    	if(laserInput.ranges[134]<1){
+		cmd.linear.x = -1;
+		cmd.angular.z = 0.5;
+		ROS_WARN("Getting out");
+        }
+        else
+        	nearedWall = 0;
+    }
     if(laserInput.ranges[134]<0.5){
-        ROS_WARN("About to run into a wall, backing up");
+        ROS_WARN("About to run into a wall, backing up!");
 	cmd.linear.x = -0.5;
         cmd.angular.z = 0.5;
+	nearedWall = 1;
     }
     /**
      * This is a message object. You stuff it with data, and then publish it.
