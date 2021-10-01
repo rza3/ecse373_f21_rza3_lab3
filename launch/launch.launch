@@ -1,0 +1,4 @@
+<launch>
+	<include file="$(find stdr_pkg)/launch/node_launch.launch"/>
+	<include file="$(find stdr_launchers)/launch/server_with_map_and_gui.launch"/>
+</launch>

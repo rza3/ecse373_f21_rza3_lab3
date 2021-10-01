@@ -1,0 +1,4 @@
+<launch>
+	<arg name = "namespace" default = "robot0"/>
+	<node ns ="$(arg namespace)" name = "stdr_pkg_node"  type = "stdr_pkg_node" pkg = "stdr_pkg"/>
+</launch>
