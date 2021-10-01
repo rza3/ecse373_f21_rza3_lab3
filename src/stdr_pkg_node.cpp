@@ -21,6 +21,7 @@ void laser_Callback(const sensor_msgs::LaserScan::ConstPtr& msg)
   laserInput = *msg;
   awake = 1;
   ROS_INFO("I heard: [%s]", msg->header.frame_id.c_str());
+  ROS_WARN("At index 134, x range is: [%2.2f]", msg->ranges[134]);
 }
 
 int main(int argc, char **argv)
@@ -70,7 +71,7 @@ int main(int argc, char **argv)
    * A count of how many messages we have sent. This is used to create
    * a unique string for each message.
    */
-  geometry_msgs::Twist cmd;
+  geometry_msgs::Twist cmd; 
   while(!awake && ros::ok()){
   	ROS_WARN("No robot yet!!");
 	ros::spinOnce();
@@ -80,19 +81,18 @@ int main(int argc, char **argv)
   while (ros::ok())
   {
     cmd = des;
-    if(laserInput.range_min<1){
-	cmd.linear.x = 0;
+    if(laserInput.ranges[134]<0.5){
+        ROS_WARN("About to run into a wall, backing up");
+	cmd.linear.x = -0.5;
         cmd.angular.z = 0;
     }
     /**
      * This is a message object. You stuff it with data, and then publish it.
      */
     /*std_msgs::String msg;
-
     std::stringstream ss;
     ss << "hello world " << count;
     msg.data = ss.str();
-
     ROS_INFO("%s", msg.data.c_str());*/
 
     /**
