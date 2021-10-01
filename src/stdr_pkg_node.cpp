@@ -4,15 +4,22 @@
 #include <sstream>
 #include "geometry_msgs/Twist.h"
 #include "sensor_msgs/LaserScan.h"
+
+geometry_msgs::Twist des;
+sensor_msgs::LaserScan laserInput;
 /**
  * This tutorial demonstrates simple sending of messages over the ROS system.
  */
+int awake = 0;
 void des_vel_Callback(const geometry_msgs::Twist::ConstPtr& msg)
 {
+  des = *msg;
   ROS_INFO("I heard the linear x is: [%2.2f]", msg->linear.x);
 }
 void laser_Callback(const sensor_msgs::LaserScan::ConstPtr& msg)
 {
+  laserInput = *msg;
+  awake = 1;
   ROS_INFO("I heard: [%s]", msg->header.frame_id.c_str());
 }
 
@@ -55,17 +62,28 @@ int main(int argc, char **argv)
    * buffer up before throwing some away.
    */
   ros::Publisher chatter_pub = n.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
-  ros::Subscriber sub1 = n.subscribe("/robot0/des_vel",1000,des_vel_Callback);
-  ros::Subscriber sub2 = n.subscribe("/robot0/laser_1",1000,laser_Callback);
+  ros::Subscriber sub1 = n.subscribe("des_vel",1000,des_vel_Callback);
+  ros::Subscriber sub2 = n.subscribe("laser_1",1000,laser_Callback);
   ros::Rate loop_rate(10);
 
   /**
    * A count of how many messages we have sent. This is used to create
    * a unique string for each message.
    */
+  geometry_msgs::Twist cmd;
+  while(!awake && ros::ok()){
+  	ROS_WARN("No robot yet!!");
+	ros::spinOnce();
+	loop_rate.sleep();
+  }
   int count = 0;
   while (ros::ok())
   {
+    cmd = des;
+    if(laserInput.range_min<1){
+	cmd.linear.x = 0;
+        cmd.angular.z = 0;
+    }
     /**
      * This is a message object. You stuff it with data, and then publish it.
      */
@@ -83,7 +101,8 @@ int main(int argc, char **argv)
      * given as a template parameter to the advertise<>() call, as was done
      * in the constructor above.
      */
-    //chatter_pub.publish(msg);
+    
+    chatter_pub.publish(cmd);
 
     ros::spinOnce();
 
