@@ -83,7 +83,7 @@ int main(int argc, char **argv)
   {
     cmd = des;
     if(nearedWall){
-    	if(laserInput.ranges[134]<1){
+    	if(laserInput.ranges[134]<1.5){
 		cmd.linear.x = -1;
 		cmd.angular.z = 0.5;
 		ROS_WARN("Getting out");
@@ -91,11 +91,19 @@ int main(int argc, char **argv)
         else
         	nearedWall = 0;
     }
-    if(laserInput.ranges[134]<0.5){
+    if(laserInput.ranges[134]<1){
         ROS_WARN("About to run into a wall, backing up!");
 	cmd.linear.x = -0.5;
         cmd.angular.z = 0.5;
 	nearedWall = 1;
+    }
+   
+    for(int i = 0; i<270; i++){
+	if(i!=134 && laserInput.ranges[i]<0.5){
+		cmd.linear.x = 0;
+		cmd.angular.z = 0.5;
+		ROS_WARN("Something's near the wall!");
+	}
     }
     /**
      * This is a message object. You stuff it with data, and then publish it.
