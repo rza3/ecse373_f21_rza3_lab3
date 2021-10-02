@@ -4,4 +4,5 @@
 		<arg name = "namespaceSmall" value = "$(arg namespace)" />
 	</include>
 	<include file="$(find stdr_launchers)/launch/server_with_map_and_gui.launch"/>
+	<node pkg = "rqt_gui" type = "rqt_gui" name = "rqt_gui" />
 </launch>
